@@ -25,22 +25,14 @@ android {
       val keystorePath = System.getenv("KEYSTORE_PATH")
         ?: "${rootDir}/my-upload-key.jks"
 
-      val storeFileRef = file(keystorePath)
+      val ks = file(keystorePath)
 
-      // SAFE CHECK (prevent crash if file missing)
-      if (storeFileRef.exists()) {
-        storeFile = storeFileRef
+      if (ks.exists()) {
+        storeFile = ks
         storePassword = System.getenv("STORE_PASSWORD")
         keyAlias = System.getenv("KEY_ALIAS") ?: "upload"
         keyPassword = System.getenv("KEY_PASSWORD")
       }
-    }
-
-    create("debugConfig") {
-      storeFile = file("${rootDir}/debug.keystore")
-      storePassword = "android"
-      keyAlias = "androiddebugkey"
-      keyPassword = "android"
     }
   }
 
@@ -54,16 +46,22 @@ android {
         "proguard-rules.pro"
       )
 
-      // SAFE SIGNING (fallback to debug if missing)
-      signingConfig = if (signingConfigs["release"].storeFile?.exists() == true) {
+      // SAFE RELEASE SIGNING
+      signingConfig = if (
+        signingConfigs.findByName("release")?.storeFile != null &&
+        signingConfigs["release"].storeFile!!.exists()
+      ) {
         signingConfigs["release"]
       } else {
-        signingConfigs["debugConfig"]
+        signingConfig = null
+        signingConfig
       }
     }
 
     debug {
-      signingConfig = signingConfigs["debugConfig"]
+      // IMPORTANT: DO NOT force debug keystore (fix Codemagic crash)
+      isMinifyEnabled = false
+      isCrunchPngs = false
     }
   }
 
