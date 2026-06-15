@@ -1,0 +1,6 @@
+{
+  "name": "NexVoice Studio Lite",
+  "description": "Polished dark-themed offline Text-to-Speech studio with precise vocal tuning, styled chip parameters, and a file library.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
