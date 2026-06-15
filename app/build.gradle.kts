@@ -25,10 +25,10 @@ android {
       val keystorePath = System.getenv("KEYSTORE_PATH")
         ?: "${rootDir}/my-upload-key.jks"
 
-      val ks = file(keystorePath)
+      val ksFile = file(keystorePath)
 
-      if (ks.exists()) {
-        storeFile = ks
+      if (ksFile.exists()) {
+        storeFile = ksFile
         storePassword = System.getenv("STORE_PASSWORD")
         keyAlias = System.getenv("KEY_ALIAS") ?: "upload"
         keyPassword = System.getenv("KEY_PASSWORD")
@@ -37,31 +37,28 @@ android {
   }
 
   buildTypes {
+
     release {
-      isCrunchPngs = false
       isMinifyEnabled = false
+      isCrunchPngs = false
 
       proguardFiles(
         getDefaultProguardFile("proguard-android-optimize.txt"),
         "proguard-rules.pro"
       )
 
-      // SAFE RELEASE SIGNING
-      signingConfig = if (
-        signingConfigs.findByName("release")?.storeFile != null &&
-        signingConfigs["release"].storeFile!!.exists()
-      ) {
-        signingConfigs["release"]
-      } else {
-        signingConfig = null
-        signingConfig
+      // SAFE SIGNING (only if keystore exists)
+      if (signingConfigs.findByName("release")?.storeFile != null) {
+        signingConfig = signingConfigs["release"]
       }
     }
 
     debug {
-      // IMPORTANT: DO NOT force debug keystore (fix Codemagic crash)
       isMinifyEnabled = false
       isCrunchPngs = false
+
+      // IMPORTANT: DO NOT set custom debug signing
+      // Android uses default debug keystore automatically
     }
   }
 
