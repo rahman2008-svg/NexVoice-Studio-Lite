@@ -47,8 +47,10 @@ android {
         "proguard-rules.pro"
       )
 
-      // SAFE SIGNING (only if keystore exists)
-      if (signingConfigs.findByName("release")?.storeFile != null) {
+      // SAFE SIGNING (ONLY if valid keystore exists)
+      val ksFile = signingConfigs.findByName("release")?.storeFile
+
+      if (ksFile != null && ksFile.exists()) {
         signingConfig = signingConfigs["release"]
       }
     }
@@ -57,8 +59,9 @@ android {
       isMinifyEnabled = false
       isCrunchPngs = false
 
-      // IMPORTANT: DO NOT set custom debug signing
-      // Android uses default debug keystore automatically
+      // IMPORTANT:
+      // DO NOT override debug signing
+      // Android uses system debug keystore automatically
     }
   }
 
