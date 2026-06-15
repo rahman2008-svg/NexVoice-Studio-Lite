@@ -5,52 +5,37 @@ workflows:
     max_build_duration: 60
 
     environment:
-      flutter: stable
       java: 17
-
-      vars:
-        PACKAGE_NAME: "com.nexvoice.studio.lite"
 
     cache:
       cache_paths:
         - ~/.gradle/caches
         - ~/.gradle/wrapper
-        - ~/.pub-cache
-
-    triggering:
-      events:
-        - push
-        - pull_request
-      branch_patterns:
-        - pattern: main
-          include: true
-        - pattern: master
-          include: true
 
     scripts:
       - name: Check project structure
         script: |
           ls -la
 
-      - name: Get dependencies
+      - name: Make Gradle executable
         script: |
-          flutter pub get
+          chmod +x ./gradlew
 
-      - name: Clean project
+      - name: Clean build
         script: |
-          flutter clean
+          ./gradlew clean
 
-      - name: Build APK (Release)
+      - name: Build Release APK
         script: |
-          flutter build apk --release
+          ./gradlew assembleRelease
 
-      - name: Build App Bundle (AAB)
+      - name: Build AAB (Play Store)
         script: |
-          flutter build appbundle --release
+          ./gradlew bundleRelease
 
     artifacts:
-      - build/app/outputs/flutter-apk/app-release.apk
-      - build/app/outputs/bundle/release/*.aab
+      - app/build/outputs/apk/release/*.apk
+      - app/build/outputs/bundle/release/*.aab
 
     publishing:
       email:
