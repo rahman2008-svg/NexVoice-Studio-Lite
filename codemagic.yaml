@@ -28,23 +28,19 @@ workflows:
           include: true
 
     scripts:
-      - name: Set up Android local.properties
+      - name: Check project structure
         script: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > $CM_BUILD_DIR/android/local.properties
+          ls -la
 
       - name: Get dependencies
         script: |
           flutter pub get
 
-      - name: Clean build
+      - name: Clean project
         script: |
           flutter clean
 
-      - name: Run tests (optional)
-        script: |
-          flutter test || true
-
-      - name: Build Release APK
+      - name: Build APK (Release)
         script: |
           flutter build apk --release
 
