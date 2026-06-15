@@ -23,10 +23,9 @@ workflows:
           include: true
 
     scripts:
-      - name: Check project structure
+      - name: Checkout project
         script: |
           ls -la
-          ls app || true
 
       - name: Grant Gradle permission
         script: |
@@ -36,11 +35,11 @@ workflows:
         script: |
           ./gradlew clean
 
-      - name: Build Debug APK (safe fallback)
+      - name: Build Debug APK (safe)
         script: |
           ./gradlew assembleDebug
 
-      - name: Build Release APK
+      - name: Build Release APK (safe fallback)
         script: |
           ./gradlew assembleRelease || true
 
